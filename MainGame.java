@@ -12,12 +12,14 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Random;
 
 public class MainGame extends Canvas implements Runnable{
 	private static final long serialVersionUID = -95712375401497748L;
 
-	public static final int WIDTH = 640, HEIGHT = WIDTH / 12 * 9;
+	public static final int WIDTH = 1928, HEIGHT = 1040;
 	
 	private Thread thread;
 	private boolean running = false;
@@ -27,13 +29,27 @@ public class MainGame extends Canvas implements Runnable{
 	
 	public MainGame(){
 		handler = new Handler();
+		
+		handler.createLevel();
+		
 		this.addKeyListener(new KeyBinds(handler));
 		
-		new Window(WIDTH, HEIGHT, "Hyper Fight Mimic", this);
+		new Window(WIDTH, HEIGHT, "Speed Fighters", this);
 		
-		r = new Random();
-		handler.addObject(new Player(WIDTH / 2 - 32, HEIGHT / 2 - 32, ID.Player));
-		handler.addObject(new Player(WIDTH / 2 + 64, HEIGHT / 2 - 32, ID.Player2));
+		handler.addObject(new Player(WIDTH / 2 - 32, HEIGHT / 2 - 32, handler, ID.Player));
+		handler.addObject(new Player(WIDTH / 2 + 64, HEIGHT / 2 - 32, handler, ID.Player2));
+	}
+	
+	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT,BufferedImage.TYPE_INT_RGB);
+	private BufferedImage background = null;
+	
+	public void init() {
+		BufferedImageLoader loader = new BufferedImageLoader();
+		try {
+			background = loader.loadImage("/JavaBackground.png");
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public synchronized void start() {
@@ -51,6 +67,7 @@ public class MainGame extends Canvas implements Runnable{
 	}
 	
 	public void run(){
+		init();
 		long lastTime = System.nanoTime();
 		double amountOfTicks = 60.0;
 		double ns = 1000000000 / amountOfTicks;
@@ -90,9 +107,12 @@ public class MainGame extends Canvas implements Runnable{
 		}
 		
 		Graphics g = bs.getDrawGraphics();
+		////////////////////////////////////////////////////////////
+		g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 		
-		g.setColor(Color.blue);
 		g.fillRect(0,  0, WIDTH, HEIGHT);
+		g.drawImage(background, 0, 0, null);
+		////////////////////////////////////////////////////////////
 		
 		handler.render(g);
 		

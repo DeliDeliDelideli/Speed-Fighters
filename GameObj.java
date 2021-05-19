@@ -1,12 +1,16 @@
 package cpt;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public abstract class GameObj {
 	
 	protected int x, y;
 	protected ID id;
-	protected int velX, velY;
+	protected int velX;
+	protected float velY = 0;
+	protected boolean falling = true;
+	protected boolean jumping = false;
 	
 	public GameObj(int x, int y, ID id) {
 		this.x = x;
@@ -16,6 +20,7 @@ public abstract class GameObj {
 	
 	public abstract void tick();
 	public abstract void render(Graphics g);
+	public abstract Rectangle getBounds();
 	
 	public void setX(int x) {
 		this.x = x;
@@ -45,6 +50,18 @@ public abstract class GameObj {
 		return velX;
 	}
 	public int getVelY() {
-		return velY;
+		return (int) velY;
+	}
+	public boolean isFalling() {
+		return falling;
+	}
+	public void setFalling(boolean falling) {
+		this.falling = falling;
+	}
+	public boolean isJumping() {
+		return jumping;
+	}
+	public void setJumping(boolean jumping) {
+		this.jumping = jumping;
 	}
 }
